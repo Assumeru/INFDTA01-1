@@ -19,4 +19,9 @@ public class User {
 	public Map<Integer, Float> getRatings() {
 		return ratings;
 	}
+
+	@Override
+	public String toString() {
+		return "<User " + id + " | ratings: " + ratings.size() + ">";
+	}
 }
