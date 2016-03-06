@@ -2,7 +2,7 @@ package hro.infdta011.calculation;
 
 public class ManhattanDistance extends AbstractUserCalculator {
 	public ManhattanDistance() {
-		super(true);
+		super(true, true);
 	}
 
 	@Override

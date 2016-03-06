@@ -2,7 +2,7 @@ package hro.infdta011.calculation;
 
 public class ApproximatePearsonCoefficient extends AbstractUserCalculator {
 	public ApproximatePearsonCoefficient() {
-		super(true);
+		super(true, false);
 	}
 
 	@Override

@@ -20,6 +20,13 @@ public class User {
 		return ratings;
 	}
 
+	public float getRating(int id) {
+		if(ratings.containsKey(id)) {
+			return ratings.get(id);
+		}
+		return 0;
+	}
+
 	@Override
 	public String toString() {
 		return "<User " + id + " | ratings: " + ratings.size() + ">";

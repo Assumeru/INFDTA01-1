@@ -2,7 +2,7 @@ package hro.infdta011.calculation;
 
 public class EuclideanDistance extends AbstractUserCalculator {
 	public EuclideanDistance() {
-		super(true);
+		super(true, true);
 	}
 
 	@Override

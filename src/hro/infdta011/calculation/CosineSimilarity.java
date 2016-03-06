@@ -2,7 +2,7 @@ package hro.infdta011.calculation;
 
 public class CosineSimilarity extends AbstractUserCalculator {
 	public CosineSimilarity() {
-		super(false);
+		super(false, false);
 	}
 
 	@Override

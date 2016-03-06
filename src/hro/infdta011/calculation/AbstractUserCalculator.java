@@ -8,9 +8,11 @@ import hro.infdta011.User;
 
 public abstract class AbstractUserCalculator implements UserCalculator {
 	private boolean union;
+	private boolean lowestIsNearest;
 
-	public AbstractUserCalculator(boolean union) {
+	public AbstractUserCalculator(boolean union, boolean lowestIsNearest) {
 		this.union = union;
+		this.lowestIsNearest = lowestIsNearest;
 	}
 
 	@Override
@@ -41,5 +43,10 @@ public abstract class AbstractUserCalculator implements UserCalculator {
 			i++;
 		}
 		return out;
+	}
+
+	@Override
+	public boolean lowestIsNearest() {
+		return lowestIsNearest;
 	}
 }
