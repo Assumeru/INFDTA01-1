@@ -15,9 +15,6 @@ public class Ratings {
 				sumD += neighbour.getDistance();
 			}
 		}
-		if(sumR / sumD > 6) {
-			System.err.println(item + " " + sumR + ", " + sumD);
-		}
 		return (float) (sumR / sumD);
 	}
 
