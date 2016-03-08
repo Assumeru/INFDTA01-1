@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * A fixed-size list that keeps track of the top or bottom <i>n</i> values.
+ */
 public class TopList<E extends Comparable<E>> extends AbstractList<E> {
 	private int size;
 	private boolean reverse;

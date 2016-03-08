@@ -10,6 +10,10 @@ public abstract class AbstractUserCalculator implements UserCalculator {
 	private boolean union;
 	private boolean lowestIsNearest;
 
+	/**
+	 * @param union If true only items rated by both users will be considered, if false unrated items will have a rating of 0
+	 * @param lowestIsNearest If true lower values will be considered closer
+	 */
 	public AbstractUserCalculator(boolean union, boolean lowestIsNearest) {
 		this.union = union;
 		this.lowestIsNearest = lowestIsNearest;
@@ -21,6 +25,13 @@ public abstract class AbstractUserCalculator implements UserCalculator {
 		return calculate(values[0], values[1]);
 	}
 
+	/**
+	 * Calculates the distance between two sets of ratings.
+	 * 
+	 * @param lhs The first user's ratings
+	 * @param rhs The second user's ratings
+	 * @return The distance between both users
+	 */
 	protected abstract double calculate(float[] lhs, float[] rhs);
 
 	private float[][] getValues(Map<Integer, Float> lhs, Map<Integer, Float> rhs) {

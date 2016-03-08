@@ -1,10 +1,15 @@
 package hro.infdta011.calculation;
 
-import java.util.Arrays;
-
 import hro.infdta011.Neighbour;
 
 public class Ratings {
+	/**
+	 * Predicts what rating a user would give an item.
+	 * 
+	 * @param neighbours The user's neighbours
+	 * @param item The item's id
+	 * @return The predicted rating
+	 */
 	public static float predict(Iterable<Neighbour> neighbours, int item) {
 		double sumD = 0;
 		double sumR = 0;
@@ -16,9 +21,5 @@ public class Ratings {
 			}
 		}
 		return (float) (sumR / sumD);
-	}
-
-	public static float predict(Neighbour[] neighbours, int item) {
-		return predict(Arrays.asList(neighbours), item);
 	}
 }

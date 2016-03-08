@@ -4,6 +4,10 @@ public class Neighbour implements Comparable<Neighbour> {
 	private User user;
 	private double distance;
 
+	/**
+	 * @param user The neighbour
+	 * @param distance The distance to the neighbour
+	 */
 	public Neighbour(User user, double distance) {
 		this.user = user;
 		this.distance = distance;
