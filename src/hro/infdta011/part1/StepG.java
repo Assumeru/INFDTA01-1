@@ -1,17 +1,18 @@
 package hro.infdta011.part1;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import hro.infdta011.Neighbour;
 import hro.infdta011.Rating;
 import hro.infdta011.Step;
-import hro.infdta011.TopSet;
+import hro.infdta011.TopList;
 import hro.infdta011.User;
 import hro.infdta011.calculation.ApproximatePearsonCoefficient;
 import hro.infdta011.calculation.Ratings;
 import hro.infdta011.calculation.UserCalculator;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class StepG implements Step<String, Void> {
 	private static final UserCalculator PEARSON = new ApproximatePearsonCoefficient();
@@ -19,22 +20,32 @@ public class StepG implements Step<String, Void> {
 	@Override
 	public Void run(String input) {
 		Map<Integer, User> users = new StepB("\t").run(input);
-		Set<Integer> predictableItems = new HashSet<>();
-		Set<Neighbour> neighbours = getNeighbours(users, predictableItems);
+		User user = users.get(186);
+		Collection<Neighbour> neighbours = user.calculateNeighbours(users.values(), PEARSON, 25);
+		Set<Integer> predictableItems = getPredictableItems(neighbours, user);
 		printRatings(predictRatings(neighbours, predictableItems, 8, null));
 		printRatings(predictRatings(neighbours, predictableItems, 8, 3));
 		return null;
 	}
 
-	private void printRatings(Set<Rating> ratings) {
+	private Set<Integer> getPredictableItems(Collection<Neighbour> neighbours, User user) {
+		Set<Integer> predictableItems = new HashSet<>();
+		for(Neighbour neighbour : neighbours) {
+			predictableItems.addAll(neighbour.getUser().getRatings().keySet());
+		}
+		predictableItems.removeAll(user.getRatings().keySet());
+		return predictableItems;
+	}
+
+	private void printRatings(Collection<Rating> ratings) {
 		System.out.println("Predicted ratings: [item, rating]");
 		for(Rating r : ratings) {
 			System.out.println(r);
 		}
 	}
 
-	private Set<Rating> predictRatings(Set<Neighbour> neighbours, Set<Integer> predictableItems, int maxRatings, Integer minNeighbours) {
-		Set<Rating> ratings = new TopSet<>(maxRatings, true);
+	private Collection<Rating> predictRatings(Collection<Neighbour> neighbours, Set<Integer> predictableItems, int maxRatings, Integer minNeighbours) {
+		Collection<Rating> ratings = new TopList<>(maxRatings, true);
 		for(int item : predictableItems) {
 			if(minNeighbours == null || ratedByAtLeast(item, minNeighbours, neighbours)) {
 				float rating = Ratings.predict(neighbours, item);
@@ -46,7 +57,7 @@ public class StepG implements Step<String, Void> {
 		return ratings;
 	}
 
-	private boolean ratedByAtLeast(int item, int minNeighbours, Set<Neighbour> neighbours) {
+	private boolean ratedByAtLeast(int item, int minNeighbours, Collection<Neighbour> neighbours) {
 		int found = 0;
 		for(Neighbour n : neighbours) {
 			if(n.getUser().getRating(item) > 0) {
@@ -57,18 +68,5 @@ public class StepG implements Step<String, Void> {
 			}
 		}
 		return false;
-	}
-
-	private Set<Neighbour> getNeighbours(Map<Integer, User> users, Set<Integer> predictableItems) {
-		User user = users.get(186);
-		Set<Neighbour> values = new TopSet<>(25, !PEARSON.lowestIsNearest());
-		for(User neighbour : users.values()) {
-			if(neighbour != user) {
-				values.add(new Neighbour(neighbour, PEARSON.calculate(user, neighbour)));
-				predictableItems.addAll(neighbour.getRatings().keySet());
-			}
-		}
-		predictableItems.removeAll(user.getRatings().keySet());
-		return values;
 	}
 }

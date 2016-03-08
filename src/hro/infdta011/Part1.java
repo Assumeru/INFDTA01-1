@@ -1,10 +1,10 @@
 package hro.infdta011;
 
-import java.util.Map;
-
 import hro.infdta011.part1.StepB;
 import hro.infdta011.part1.StepE;
 import hro.infdta011.part1.StepG;
+
+import java.util.Map;
 
 public class Part1 {
 	public static void main(String[] args) {
