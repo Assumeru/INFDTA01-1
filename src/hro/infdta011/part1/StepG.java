@@ -21,28 +21,47 @@ public class StepG implements Step<String, Void> {
 		Map<Integer, User> users = new StepB("\t").run(input);
 		Set<Integer> predictableItems = new HashSet<>();
 		Set<Neighbour> neighbours = getNeighbours(users, predictableItems);
-		Set<Rating> ratings = predictRatings(neighbours, predictableItems, 8);
+		printRatings(predictRatings(neighbours, predictableItems, 8, null));
+		printRatings(predictRatings(neighbours, predictableItems, 8, 3));
+		return null;
+	}
+
+	private void printRatings(Set<Rating> ratings) {
 		System.out.println("Predicted ratings: [item, rating]");
 		for(Rating r : ratings) {
 			System.out.println(r);
 		}
-		return null;
 	}
 
-	private Set<Rating> predictRatings(Set<Neighbour> neighbours, Set<Integer> predictableItems, int maxRatings) {
+	private Set<Rating> predictRatings(Set<Neighbour> neighbours, Set<Integer> predictableItems, int maxRatings, Integer minNeighbours) {
 		Set<Rating> ratings = new TopSet<>(maxRatings, true);
 		for(int item : predictableItems) {
-			float rating = Ratings.predict(neighbours, item);
-			if(!Float.isNaN(rating)) {
-				ratings.add(new Rating(item, rating));
+			if(minNeighbours == null || ratedByAtLeast(item, minNeighbours, neighbours)) {
+				float rating = Ratings.predict(neighbours, item);
+				if(!Float.isNaN(rating)) {
+					ratings.add(new Rating(item, rating));
+				}
 			}
 		}
 		return ratings;
 	}
 
+	private boolean ratedByAtLeast(int item, int minNeighbours, Set<Neighbour> neighbours) {
+		int found = 0;
+		for(Neighbour n : neighbours) {
+			if(n.getUser().getRating(item) > 0) {
+				found++;
+				if(found >= minNeighbours) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	private Set<Neighbour> getNeighbours(Map<Integer, User> users, Set<Integer> predictableItems) {
 		User user = users.get(186);
-		Set<Neighbour> values = new TopSet<>(50, !PEARSON.lowestIsNearest());
+		Set<Neighbour> values = new TopSet<>(25, !PEARSON.lowestIsNearest());
 		for(User neighbour : users.values()) {
 			if(neighbour != user) {
 				values.add(new Neighbour(neighbour, PEARSON.calculate(user, neighbour)));
