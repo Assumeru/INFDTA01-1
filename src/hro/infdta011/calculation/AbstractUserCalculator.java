@@ -1,10 +1,10 @@
 package hro.infdta011.calculation;
 
+import hro.infdta011.User;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import hro.infdta011.User;
 
 public abstract class AbstractUserCalculator implements UserCalculator {
 	private boolean union;
@@ -19,20 +19,10 @@ public abstract class AbstractUserCalculator implements UserCalculator {
 		this.lowestIsNearest = lowestIsNearest;
 	}
 
-	@Override
 	public double calculate(User lhs, User rhs) {
 		float[][] values = getValues(lhs.getRatings(), rhs.getRatings());
 		return calculate(values[0], values[1]);
 	}
-
-	/**
-	 * Calculates the distance between two sets of ratings.
-	 * 
-	 * @param lhs The first user's ratings
-	 * @param rhs The second user's ratings
-	 * @return The distance between both users
-	 */
-	protected abstract double calculate(float[] lhs, float[] rhs);
 
 	private float[][] getValues(Map<Integer, Float> lhs, Map<Integer, Float> rhs) {
 		Set<Integer> keys = new HashSet<>(lhs.size());
@@ -55,6 +45,15 @@ public abstract class AbstractUserCalculator implements UserCalculator {
 		}
 		return out;
 	}
+
+	/**
+	 * Calculates the distance between two sets of ratings.
+	 * 
+	 * @param lhs The first user's ratings
+	 * @param rhs The second user's ratings
+	 * @return The distance between both users
+	 */
+	protected abstract double calculate(float[] lhs, float[] rhs);
 
 	@Override
 	public boolean lowestIsNearest() {
