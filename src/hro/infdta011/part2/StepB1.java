@@ -1,7 +1,6 @@
 package hro.infdta011.part2;
 
 import hro.infdta011.User;
-import hro.infdta011.calculation.SlopeOne;
 
 public class StepB1 {
 	public void run(ParsedFile file) {
@@ -22,7 +21,7 @@ public class StepB1 {
 
 	private void predictRating(ParsedFile file, User user, int item) {
 		System.out.println("Prediction for item " + item + " and user " + user.getId());
-		System.out.println(" " + SlopeOne.predictRating(file, user, file.getItem(item)));
+		System.out.println(" " + file.predictRating(user, file.getItem(item)));
 	}
 
 	private void ii(ParsedFile file) {

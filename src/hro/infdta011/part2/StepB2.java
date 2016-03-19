@@ -1,27 +1,31 @@
 package hro.infdta011.part2;
 
+import java.util.List;
+
 import hro.infdta011.Rating;
 import hro.infdta011.TopList;
 import hro.infdta011.User;
-import hro.infdta011.calculation.SlopeOne;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class StepB2 {
 	public void run(ParsedFile input) {
-		Set<Integer> items = new HashSet<>(input.getItems());
 		User user = input.getUser(186);
+		long time = System.nanoTime();
+		List<Rating> ratings = predictRatings(input, user);
+		time = System.nanoTime() - time;
+		System.out.println(ratings);
+		System.out.println("Calculation time: " + (time / 1000000) + "ms");
+	}
+
+	private List<Rating> predictRatings(ParsedFile input, User user) {
 		List<Rating> ratings = new TopList<>(5, true);
-		for(int item : items) {
+		for(int item : input.getItems()) {
 			if(!user.getRatings().containsKey(item)) {
-				float rating = SlopeOne.predictRating(input, user, input.getItem(item));
+				float rating = input.predictRating(user, input.getItem(item));
 				if(!Float.isNaN(rating)) {
 					ratings.add(new Rating(item, rating));
 				}
 			}
 		}
-		System.out.println(ratings);
+		return ratings;
 	}
 }

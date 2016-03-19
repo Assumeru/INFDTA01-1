@@ -1,13 +1,13 @@
 package hro.infdta011.part2;
 
-import hro.infdta011.Item;
-import hro.infdta011.ItemDeviation;
-import hro.infdta011.User;
-import hro.infdta011.calculation.SlopeOne;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import hro.infdta011.Item;
+import hro.infdta011.ItemDeviation;
+import hro.infdta011.User;
 
 public class ParsedFile {
 	private Map<Integer, Item> items;
@@ -32,7 +32,20 @@ public class ParsedFile {
 		}
 		item.getRatings().put(userId, rating);
 		user.getRatings().put(itemId, rating);
-		itemDeviations = null;
+		addDeviations(item, userId, rating);
+	}
+
+	private void addDeviations(Item item, int user, float rating) {
+		if(itemDeviations != null) {
+			for(Item i : items.values()) {
+				if(i != item) {
+					Float r = i.getRatings().get(user);
+					if(r != null) {
+						item.getDeviation(i).addDeviation(i, rating - r);
+					}
+				}
+			}
+		}
 	}
 
 	public User getUser(int id) {
@@ -64,8 +77,8 @@ public class ParsedFile {
 		for(Item lhs : items.values()) {
 			for(Item rhs : items.values()) {
 				if(lhs != rhs) {
-					ItemDeviation dev = SlopeOne.calculateDeviation(lhs, rhs);
-					//these maps are many times faster than searching a HashSet
+					ItemDeviation dev = calculateDeviation(lhs, rhs);
+					// these maps are many times faster than searching a HashSet
 					put(lhs.getId(), rhs.getId(), dev);
 					put(rhs.getId(), lhs.getId(), dev);
 				}
@@ -73,7 +86,29 @@ public class ParsedFile {
 		}
 	}
 
+	public ItemDeviation calculateDeviation(Item lhs, Item rhs) {
+		ItemDeviation deviation = new ItemDeviation(lhs, rhs);
+		for(Entry<Integer, Float> entry : lhs.getRatings().entrySet()) {
+			Float rating = rhs.getRatings().get(entry.getKey());
+			if(rating != null) {
+				deviation.addDeviation(lhs, entry.getValue() - rating);
+			}
+		}
+		return deviation;
+	}
+
 	public Collection<Integer> getItems() {
 		return items.keySet();
+	}
+
+	public float predictRating(User user, Item item) {
+		double numerator = 0;
+		double denominator = 0;
+		for(Entry<Integer, Float> entry : user.getRatings().entrySet()) {
+			ItemDeviation dev = getItem(entry.getKey()).getDeviation(item);
+			numerator += (entry.getValue() + dev.getDeviation(item)) * dev.getUsers();
+			denominator += dev.getUsers();
+		}
+		return (float) (numerator / denominator);
 	}
 }
